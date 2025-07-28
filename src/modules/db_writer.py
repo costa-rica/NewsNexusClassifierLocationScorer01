@@ -50,6 +50,8 @@ def write_scores_to_db_from_csv():
         # 3. Read CSV
         df = pd.read_csv(CSV_PATH)
         df_len = len(df)
+        # Drop rows with NaN article_id
+        df = df.dropna(subset=["article_id"])
         # 4. Insert rows into ArticleEntityWhoCategorizedArticleContract
         for _, row in df.iterrows():
             try:
