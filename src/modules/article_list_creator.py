@@ -5,7 +5,7 @@ from transformers import pipeline
 from tqdm import tqdm
 import pandas as pd
 
-def create_article_list(limit=None):
+def create_article_list(entity_who_categorized_article_id, limit=None):
     # Load environment variables
     load_dotenv()
 
@@ -20,9 +20,6 @@ def create_article_list(limit=None):
 
     # Connect to SQLite database
     engine = create_engine(f"sqlite:///{DB_PATH}")
-
-    # Load zero-shot classification model
-    classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
     # Query articles with optional limit
     query = "SELECT id, description FROM Articles"
