@@ -39,6 +39,10 @@ def classify_location_to_csv(limit=None):
             article_id = article.id
             description = article.description or ""
 
+            # Skip if description is empty
+            if not description.strip():
+                continue
+
             # Define candidate labels
             labels = ["Occurred in the United States", "Occurred outside the United States"]
 
