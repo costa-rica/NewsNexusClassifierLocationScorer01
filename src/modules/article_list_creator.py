@@ -31,7 +31,7 @@ def create_article_list(entity_who_categorized_article_id, limit=None):
         excluded_ids = [row[0] for row in excluded_ids]
 
         # Query only articles not already analyzed
-        query = "SELECT id, description FROM Articles"
+        query = "SELECT id, description, title FROM Articles"
         if excluded_ids:
             placeholders = ",".join(str(i) for i in excluded_ids)
             query += f" WHERE id NOT IN ({placeholders})"

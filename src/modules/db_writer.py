@@ -81,7 +81,6 @@ def write_scores_to_db_from_csv():
     else:
         print(f"{df_len} rows were written to the database.")
 
-    print("Completed write_scores_to_db_from_csv function.")
 
 if __name__ == "__main__":
     write_scores_to_db_from_csv()

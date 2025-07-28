@@ -18,7 +18,6 @@ def classify_location_to_csv(articles_list, processed_ids, existing_results_list
     # Load zero-shot classification model
     classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
-
     total_articles = len(articles_list)
     progress_bar = tqdm(total=total_articles, desc="Classifying articles", unit="article")
 
@@ -32,10 +31,12 @@ def classify_location_to_csv(articles_list, processed_ids, existing_results_list
 
         article_id = article.id
         description = article.description or ""
-
+        title = article.title or ""
+        article_text = title + "\n\n" + description
 
         # Skip if description is empty
-        if not description.strip():
+        # if not description.strip():
+        if not article_text.strip():
             progress_bar.update(1)
             continue
 
@@ -43,7 +44,7 @@ def classify_location_to_csv(articles_list, processed_ids, existing_results_list
         labels = ["Occurred in the United States", "Occurred outside the United States"]
 
         # Perform classification
-        classification = classifier(description, candidate_labels=labels)
+        classification = classifier(article_text, candidate_labels=labels)
 
         # Extract score for "Occurred in the United States"
         us_score = None
