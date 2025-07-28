@@ -33,6 +33,7 @@ def classify_location_to_csv(articles_list, processed_ids, existing_results_list
         article_id = article.id
         description = article.description or ""
 
+
         # Skip if description is empty
         if not description.strip():
             progress_bar.update(1)
@@ -76,6 +77,7 @@ def classify_location_to_csv(articles_list, processed_ids, existing_results_list
     df.to_csv(CSV_PATH, index=False)
 
     print(f"Results saved to {CSV_PATH}")
+    return len(df)
 
 if __name__ == "__main__":
     classify_location_to_csv()

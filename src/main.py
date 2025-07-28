@@ -35,12 +35,15 @@ def main():
 
     # Step 2: Classify articles and write results to CSV
     print("Classifying articles...")
-    classify_location_to_csv(articles_list, processed_ids, existing_results_list)
+    df_length = classify_location_to_csv(articles_list, processed_ids, existing_results_list)
     print("Classification complete. Proceeding to write scores to database...")
 
     # Step 3: Write scores from CSV to database
-    write_scores_to_db_from_csv()
-    print("Database write complete.")
+    if df_length > 0:
+        write_scores_to_db_from_csv()
+        print("Database write complete.")
+    else:
+        print("No data to write to the database.")
 
 
 

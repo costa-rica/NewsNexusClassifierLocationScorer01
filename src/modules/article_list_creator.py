@@ -21,12 +21,23 @@ def create_article_list(entity_who_categorized_article_id, limit=None):
     # Connect to SQLite database
     engine = create_engine(f"sqlite:///{DB_PATH}")
 
-    # Query articles with optional limit
-    query = "SELECT id, description FROM Articles"
-    if limit:
-        query += f" LIMIT {limit}"
-
     with engine.connect() as conn:
+        # Get articleIds already analyzed by this entity
+        excluded_ids = conn.execute(
+            text("SELECT articleId FROM ArticleEntityWhoCategorizedArticleContracts WHERE entityWhoCategorizesId = :entity_id"),
+            {"entity_id": entity_who_categorized_article_id}
+        ).fetchall()
+
+        excluded_ids = [row[0] for row in excluded_ids]
+
+        # Query only articles not already analyzed
+        query = "SELECT id, description FROM Articles"
+        if excluded_ids:
+            placeholders = ",".join(str(i) for i in excluded_ids)
+            query += f" WHERE id NOT IN ({placeholders})"
+        if limit:
+            query += f" LIMIT {limit}"
+
         articles_list = conn.execute(text(query)).fetchall()
 
         # Initialize results_list, loading existing CSV if available
@@ -35,7 +46,6 @@ def create_article_list(entity_who_categorized_article_id, limit=None):
         if os.path.exists(CSV_PATH):
             try:
                 existing_df = pd.read_csv(CSV_PATH)
-                # results_list = existing_df.to_dict(orient="records")
                 existing_results_list = existing_df.to_dict(orient="records")
                 processed_ids = set(existing_df["article_id"].tolist())
                 print(f"Loaded {len(existing_results_list)} existing records from {CSV_PATH}")
@@ -43,6 +53,4 @@ def create_article_list(entity_who_categorized_article_id, limit=None):
                 print(f"Could not load existing CSV: {e}")
         
 
-
     return articles_list, processed_ids, existing_results_list
-    
